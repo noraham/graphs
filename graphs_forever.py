@@ -36,7 +36,7 @@ class Queue(object):
             self.tail.next = new_node
         self.tail = new_node
 
-    def dequeue(self, data):
+    def dequeue(self):
         """remove from start of queue"""
         popped = self.head
         self.head = self.head.next
@@ -105,31 +105,34 @@ class Graph(object):
 
     def are_connected(self, start_vertex, sought):
         """given starting vertex, return True if sought data is connected to start.
-           Returns False if sought is not connected"""
+           Returns False if sought is not connected
+           To turn this into counting degrees of distance, have to change vertex
+           class to include a distance attribute on the object that you can both
+           set and get; set distance when adj are enqueued, +1 from current's
+           distance, then return distance of sought when it is reached."""
+
         gray = Queue()
         gray.enqueue(start_vertex)
         black = set()
-        black.add(start_vertex)
+        black.add(start_vertex.data)
 
         while not gray.is_empty():
             current = gray.dequeue()
-            if current.data == sought:
+            if current.data.data == sought:
                 return True
             else:
-                for white in current.adj - black:
+                for white in current.data.adj - black:
                     gray.enqueue(white)
-                    seen.add(white)
-            path += 1
-        
+                    black.add(white)        
         return False
-
 
 
 class UnitTests(TestCase):
     """Tests the classes and functions in this file"""
 
     def test_graph(self):
-        """tests Graph instantiation, Vertex instantiation, and get_vert method"""
+        """tests Graph instantiation, Vertex instantiation, and get_vert method,
+        are_connected method."""
 
         g = Graph()
         g.add_vertex('a')
@@ -152,6 +155,12 @@ class UnitTests(TestCase):
         test = g.get_vertex('d').get_adj()
         for item in test:
             assert item.data == 'e'
+
+        a_vertex = g.get_vertex('a')
+        assert g.are_connected(a_vertex, 'd') is True
+        assert g.are_connected(a_vertex, 'f') is False
+        e_vertex = g.get_vertex('e')
+        assert g.are_connected(e_vertex, 'a') is False
 
 
 if __name__ == "__main__":

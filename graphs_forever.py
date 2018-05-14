@@ -132,15 +132,17 @@ class Graph(object):
         # set up this variable in first call, don't do this in other calls
         seen = set()
 
-        def _are_connected_DFS(self, vertex, sought):
+        def _are_connected_DFS(vertex, sought):
             """recursive function"""
             if vertex.data == sought:
                 return True
             seen.add(vertex)
             for each in vertex.adj - seen:
-                if self._are_connected_DFS(self, each, sought):
+                if _are_connected_DFS(each, sought):
                     return True
             return False
+
+        return _are_connected_DFS(start_vertex, sought)
 
 
 

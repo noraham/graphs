@@ -103,7 +103,7 @@ class Graph(object):
         """what is this magic???"""
         return data in self.vertices
 
-    def are_connected(self, start_vertex, sought):
+    def are_connected_BFS(self, start_vertex, sought):
         """given starting vertex, return True if sought data is connected to start.
            Returns False if sought is not connected
            To turn this into counting degrees of distance, have to change vertex
@@ -125,6 +125,24 @@ class Graph(object):
                     gray.enqueue(white)
                     black.add(white)        
         return False
+
+    def are_connected_DFS(self, start_vertex, sought):
+        """Recursive, uses call stack for dfs"""
+
+        # set up this variable in first call, don't do this in other calls
+        seen = set()
+
+        def _are_connected_DFS(self, vertex, sought):
+            """recursive function"""
+            if vertex.data == sought:
+                return True
+            seen.add(vertex)
+            for each in vertex.adj - seen:
+                if self._are_connected_DFS(self, each, sought):
+                    return True
+            return False
+
+
 
 
 class UnitTests(TestCase):
@@ -157,10 +175,16 @@ class UnitTests(TestCase):
             assert item.data == 'e'
 
         a_vertex = g.get_vertex('a')
-        assert g.are_connected(a_vertex, 'd') is True
-        assert g.are_connected(a_vertex, 'f') is False
+        assert g.are_connected_BFS(a_vertex, 'd') is True
+        assert g.are_connected_BFS(a_vertex, 'f') is False
         e_vertex = g.get_vertex('e')
-        assert g.are_connected(e_vertex, 'a') is False
+        assert g.are_connected_BFS(e_vertex, 'a') is False
+
+        a_vertex = g.get_vertex('a')
+        assert g.are_connected_DFS(a_vertex, 'd') is True
+        assert g.are_connected_DFS(a_vertex, 'f') is False
+        e_vertex = g.get_vertex('e')
+        assert g.are_connected_DFS(e_vertex, 'a') is False
 
 
 if __name__ == "__main__":

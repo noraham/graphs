@@ -144,6 +144,32 @@ class Graph(object):
 
         return _are_connected_DFS(start_vertex, sought)
 
+    def topo_sort(self, start_vertex):
+        """Implements DFS non-recursively, counts finish time for each vertex.
+           Uses finish time to return topo sort"""
+
+        # give graph new attribute, time
+        self.time = 0
+        all_vertices = self.get_vertices()
+        unseen = set(all_vertices)
+
+        #iterate over each vertex in graph
+        for each_vertex in all_vertices:
+            if each_vertex in unseen:
+                self.dfsvisit(each_vertex, unseen)
+
+    def dfsvisit(self, start_vertex, unseen):
+        self.time += 1 # use this to set disocvery time
+        start_vertex.discovery = self.time
+        for next_vertex in start_vertex.get_vertices():
+            if next_vertex in unseen:
+                self.dfsvisit(next_vertex)
+        unseen.remove(start_vertex)
+        self.time += 1 # use this to set finish time
+        start_vertex.finish = self.time # like a time stamp for when all dependencies finish
+
+        # get all vertices and finish times, sort high to low finish time, return
+
 
 
 
@@ -152,7 +178,7 @@ class UnitTests(TestCase):
 
     def test_graph(self):
         """tests Graph instantiation, Vertex instantiation, and get_vert method,
-        are_connected method."""
+        are_connected methods."""
 
         g = Graph()
         g.add_vertex('a')
